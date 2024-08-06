@@ -6,7 +6,8 @@ use winapi::um::libloaderapi::GetModuleHandleA;
 use winapi::um::psapi::{GetModuleInformation, MODULEINFO};
 use winapi::um::processthreadsapi::GetCurrentProcess;
 
-fn find_pattern(module: &str, pattern: &[u8], mask: &str) -> Option<usize> {
+fn find_pattern(module: &str, pattern: &[u8], mask: &str) -> Option<usize> 
+    {
     let module_name = CString::new(module).unwrap();
     let hmodule = unsafe { GetModuleHandleA(module_name.as_ptr()) };
     if hmodule.is_null() {
@@ -28,15 +29,18 @@ fn find_pattern(module: &str, pattern: &[u8], mask: &str) -> Option<usize> {
 
     let pattern_length = mask.len();
 
-    for i in module_base..module_end - pattern_length {
+    for i in module_base..module_end - pattern_length
+        {
         let mut found = true;
         for j in 0..pattern_length {
-            if mask.as_bytes()[j] != b'?' && pattern[j] != unsafe { *(i as *const u8).offset(j as isize) } {
+            if mask.as_bytes()[j] != b'?' && pattern[j] != unsafe { *(i as *const u8).offset(j as isize) } 
+            {
                 found = false;
                 break;
             }
         }
-        if found {
+        if found 
+        {
             return Some(i);
         }
     }
@@ -44,7 +48,8 @@ fn find_pattern(module: &str, pattern: &[u8], mask: &str) -> Option<usize> {
     None
 }
 
-fn main() {
+fn main() 
+    {
     let ldr_load_dll: &[u8] = &[0x4C, 0x8D, 0x05, 0x18, 0x4F, 0x08, 0x00];
     let ldr_load_dll_mask = "xxxxxxx";
 
@@ -60,21 +65,27 @@ fn main() {
 
     let ldrp_load_dll_addr = find_pattern("ntdll.dll", ldrp_load_dll, ldrp_load_dll_mask);
 
-    if let Some(addr) = ldrp_load_dll_addr {
+    if let Some(addr) = ldrp_load_dll_addr
+    {
         println!("LdrpLoadDll found at address: 0x{:x}", addr);
-    } else {
+    } else 
+    {
         println!("LdrpLoadDll not found.");
     }
 
-    if let Some(addr) = ldr_load_dll_addr {
+    if let Some(addr) = ldr_load_dll_addr
+    {
         println!("LdrLoadDll found at address: 0x{:x}", addr);
-    } else {
+    } else 
+    {
         println!("LdrLoadDll addr not found.");
     }
 
-    if let Some(addr) = ldrp_load_dll_internal_addr {
+    if let Some(addr) = ldrp_load_dll_internal_addr 
+    {
         println!("LdrpLoadDllInternal found at address: 0x{:x}", addr);
-    } else {
+    } else 
+    {
         println!("LdrpLoadDllInternal not found.");
     }
 }
